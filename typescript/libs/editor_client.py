@@ -67,38 +67,23 @@ class EditorClient:
         self.worker_client = WorkerClient(proc_file)
         self.service = ServiceProxy(self.worker_client, self.node_client)
 
-        # load formatting settings and set callbacks for setting changes
-        for format_setting_name in [
+        # load formatting and telemetry settings and set callbacks for setting changes
+        for editor_setting_name in [
             'tab_size',
             'indent_size',
             'translate_tabs_to_spaces',
             'typescript_auto_format',
             'typescript_auto_indent',
-            'auto_match_enabled'
+            'auto_match_enabled',
+            TELEMETRY_SETTING_NAME,
+            CHECK_FOR_DTS_SETTING
         ]:
-            settings.add_on_change(format_setting_name, self.load_format_settings)
-        self.load_format_settings()
-
-        # load telemetry settings and set callbacks for setting changes
-        for other_setting_name in [
-            telemetry_setting_name,
-            'check_for_dts_updates'
-        ]:
-            settings.add_on_change(other_setting_name, self.load_other_settings)
-        self.load_other_settings()
+            settings.add_on_change(editor_setting_name, self.load_editor_settings)
+        self.load_editor_settings()
 
         self.initialized = True
 
-    def load_other_settings(self):
-        settings = sublime.load_settings('Preferences.sublime-settings')
-        telemetry_acceptance = settings.get(telemetry_setting_name, False)
-        self.send_metrics = False if not telemetry_acceptance else telemetry_acceptance['accepted']
-        self.telemetry_user_id = None if not telemetry_acceptance else telemetry_acceptance['userID']
-        check_dts_setting = settings.get('check_for_dts_updates', True)
-        self.check_for_dts_updates = False if not telemetry_acceptance else check_dts_setting
-        self.set_features()
-
-    def load_format_settings(self):
+    def load_editor_settings(self):
         settings = sublime.load_settings('Preferences.sublime-settings')
         self.tab_size = settings.get('tab_size', 4)
         self.indent_size = settings.get('indent_size', 4)
@@ -106,6 +91,13 @@ class EditorClient:
         self.ts_auto_format_enabled = settings.get("typescript_auto_format")
         self.ts_auto_indent_enabled = settings.get("typescript_auto_indent")
         self.auto_match_enabled = settings.get("auto_match_enabled")
+
+        telemetry_acceptance = settings.get(TELEMETRY_SETTING_NAME, False)
+        self.send_metrics = False if not telemetry_acceptance else telemetry_acceptance['accepted']
+        self.telemetry_user_id = None if not telemetry_acceptance else telemetry_acceptance['userID']
+        check_dts_setting = settings.get(CHECK_FOR_DTS_SETTING, True)
+        self.check_for_dts_updates = False if not telemetry_acceptance else check_dts_setting
+
         self.set_features()
 
     def set_features(self):
