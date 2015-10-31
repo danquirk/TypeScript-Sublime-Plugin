@@ -59,19 +59,18 @@ def _send_telemetry_acceptance_result(acceptance_result):
         lib = urllib2
         urlopen = lib.urlopen
 
-        request = urllib2.Request(appInsightsURL, data = values, headers = headers)
-        response = urllib2.urlopen(request)
+        try:
+            request = urllib2.Request(appInsightsURL, data = values, headers = headers)
+            response = urllib2.urlopen(request)
+        except Exception:
+            pass # throws when offline, just ignore
     else:
         lib = urllib
         urlopen = lib.request.urlopen
         headers["Content-Length"] = len(binary_data)
     
-        request = urllib.request.Request(appInsightsURL, data = binary_data, headers = headers)
-        response = urllib.request.urlopen(request)
-    #request = lib.Request(appInsightsURL, data = binary_data, headers = headers)
-
-    #try:
-    #    response = urlopen(request)
-    #except lib.error.HTTPError as e:
-    #    logger.log.error(e.code);
-    #    logger.log.error(e.read());
+        try:
+            request = urllib.request.Request(appInsightsURL, data = binary_data, headers = headers)
+            response = urllib.request.urlopen(request)
+        except Exception:
+            pass # throws when offline, just ignore   
