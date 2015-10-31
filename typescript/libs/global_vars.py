@@ -51,3 +51,8 @@ VALID_COMPLETION_ID_PATTERN = re.compile("[a-zA-Z_$\.][\w$\.]*\Z")
 
 # idle time length in millisecond
 IDLE_TIME_LENGTH = 200
+
+# telemetry settings
+PRIVACY_POLICY_VERSION = '1.0'
+TELEMETRY_SETTING_NAME = 'typescript_send_telemetry'
+CHECK_FOR_DTS_SETTING = 'check_for_dts_updates'

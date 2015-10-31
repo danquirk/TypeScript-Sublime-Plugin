@@ -1,0 +1,29 @@
+This plugin can be configured to collect usage data that is sent to Microsoft to help improve the product.
+
+If you do not want this information reported you can:
+- Click 'Decline' when initially prompted on startup whether you are willing to allow usage data to be collected.
+- To disable all reporting: In Sublime open the User Settings via `Preferences -> Settings - User`. Set the value of accepted to be false, like so:
+	{
+		"typescript_send_telemetry":
+		{
+			"accepted": "false",
+			"userID": ...
+			"version": ...
+		}
+	}
+- To disable only .d.ts reporting: In Sublime open the User Settings via `Preferences -> Settings - User` and set "check_for_dts_updates": false, like so:
+    {
+		"typescript_send_telemetry":
+		{
+			...
+		},
+		"check_for_dts_updates": false
+    }
+
+
+Collected Data:
+- A random, unique identifier not based on any personally identifying information.
+- TypeScript commands run
+- Which .d.ts files from DefinitelyTyped were used (if any)
+
+Go to www.typescriptlang.org/sublimetelemetry to see recent results of the data that is collected.

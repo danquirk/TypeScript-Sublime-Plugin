@@ -1,6 +1,9 @@
 import sys
 import os
+import uuid
 import subprocess
+from time import gmtime, strftime
+import json
 
 if sys.version_info < (3, 0):
     from typescript.libs import *
@@ -8,12 +11,14 @@ if sys.version_info < (3, 0):
     from typescript.libs.view_helpers import *
     from typescript.listeners import *
     from typescript.commands import *
+    from typescript.libs.telemetry import *
 else:
     from .typescript.libs import *
     from .typescript.libs.reference import *
     from .typescript.libs.view_helpers import *
     from .typescript.listeners import *
     from .typescript.commands import *
+    from .typescript.libs.telemetry import *
 
 # Enable Python Tools for visual studio remote debugging
 try:
@@ -60,7 +65,13 @@ def plugin_loaded():
     from on_activated or on_close if necessary.
     """
     log.debug("plugin_loaded started")
+
+    settings = sublime.load_settings('Preferences.sublime-settings')
+    if not settings.has(TELEMETRY_SETTING_NAME):
+        init_telemetry(settings)
+
     cli.initialize()
+
     ref_view = get_ref_view(False)
     if ref_view:
         settings = ref_view.settings()
@@ -162,3 +173,4 @@ def _execute_cmd_and_parse_version_from_output(cmd):
     if match_object is None:
         raise Exception("Cannot parse version number from ouput: '{0}'".format(output))
     return match_object.groups()[0]
+
